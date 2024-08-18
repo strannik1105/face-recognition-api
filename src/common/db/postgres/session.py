@@ -4,21 +4,20 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from config.settings import settings
+from common.config.config import Config
+
+config = Config.get_instance()
 
 
 class PostgresSession:
     @staticmethod
     def get_async() -> AsyncSession:
         session = async_sessionmaker(
-            autocommit=settings.postgres.AUTOCOMMIT,
-            autoflush=settings.postgres.AUTOFLUSH,
+            autocommit=False,
+            autoflush=False,
             bind=create_async_engine(
-                echo=settings.postgres.ECHO,
-                url=settings.postgres.DSN,
-                pool_pre_ping=settings.postgres.POOL_PRE_PING,
-                pool_size=settings.postgres.POOL_SIZE,
-                max_overflow=settings.postgres.MAX_OVERFLOW,
+                echo=True,
+                url=f"postgresql+asyncpg://{config.POSTGRES_USER}:{config.POSTGRES_PASSWORD}@{config.POSTGRES_HOST}:{config.POSTGRES_PORT}/{config.POSTGRES_DB}",
             ),
         )
         return session()

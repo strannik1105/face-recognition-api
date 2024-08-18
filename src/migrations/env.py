@@ -3,9 +3,10 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool, sql
 
-from common.db.postgres import PostgresBaseModel, PostgresDBSchemas
 from common.config.config import Config
 
+from common.db.postgres.base import PostgresBaseModel
+from models.tasks import * # noqa: F403
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -94,9 +95,6 @@ def run_migrations_online() -> None:
             compare_type=True,
             include_schemas=True,
         )
-
-        for schema in PostgresDBSchemas:
-            connection.execute(sql.text(f"CREATE SCHEMA IF NOT EXISTS {schema.value}"))
 
         with context.begin_transaction():
             context.run_migrations()
